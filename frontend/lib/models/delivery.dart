@@ -38,10 +38,7 @@ class Delivery {
     );
   }
 
-  Delivery copyWith({
-    String? status,
-    String? proofScan,
-  }) {
+  Delivery copyWith({String? status, String? proofScan}) {
     return Delivery(
       id: id,
       customerName: customerName,
