@@ -8,8 +8,13 @@ import 'rider_service.dart';
 class ApiRiderService implements RiderService {
   final String baseUrl;
   final String? accessToken;
+  final http.Client _client;
 
-  ApiRiderService({required this.baseUrl, this.accessToken});
+  ApiRiderService({
+    required this.baseUrl,
+    this.accessToken,
+    http.Client? client,
+  }) : _client = client ?? http.Client();
 
   Map<String, String> get _headers {
     final headers = <String, String>{'Content-Type': 'application/json'};
@@ -23,7 +28,7 @@ class ApiRiderService implements RiderService {
 
   @override
   Future<List<Delivery>> getMyDeliveries() async {
-    final response = await http.get(
+    final response = await _client.get(
       Uri.parse('$baseUrl/deliveries/my'),
       headers: _headers,
     );
@@ -58,7 +63,7 @@ class ApiRiderService implements RiderService {
       body['scanCode'] = scanCode;
     }
 
-    final response = await http.patch(
+    final response = await _client.patch(
       Uri.parse('$baseUrl/deliveries/$deliveryId/status'),
       headers: _headers,
       body: jsonEncode(body),
