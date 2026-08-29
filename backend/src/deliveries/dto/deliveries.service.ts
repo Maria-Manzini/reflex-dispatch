@@ -81,6 +81,9 @@ export class DeliveriesService {
     this.deliveryGateway.emitDeliveryAssigned({
       deliveryId: updated._id.toString(),
       riderId: dto.riderId,
+      customerName: updated.get('customerName') as string,
+      address: updated.get('address') as string,
+      item: updated.get('item') as string,
       pickupAddress: updated.pickupAddress,
       dropoffAddress: updated.dropoffAddress,
       status: updated.status,

@@ -24,6 +24,9 @@ export class DeliveryGateway
   emitDeliveryAssigned(payload: {
     deliveryId: string;
     riderId: string;
+    customerName: string;
+    address: string;
+    item: string;
     pickupAddress: string;
     dropoffAddress: string;
     status: string;
@@ -34,7 +37,7 @@ export class DeliveryGateway
       data: payload,
     });
     console.log(
-      `[Socket] delivery:assigned emitted — ${payload.deliveryId}`,
+      `[Socket] delivery:assigned emitted - ${payload.deliveryId}`,
     );
   }
 
