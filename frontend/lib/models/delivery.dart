@@ -52,4 +52,19 @@ class Delivery {
       updatedAt: updatedAt,
     );
   }
+
+  String get displayStatus {
+    switch (status) {
+      case 'pending':
+        return 'Created';
+      case 'assigned':
+        return 'Assigned';
+      case 'in_transit':
+        return 'Picked Up';
+      case 'delivered':
+        return 'Delivered';
+      default:
+        return status;
+    }
+  }
 }
