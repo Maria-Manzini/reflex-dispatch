@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { DeliveryStatus } from '../../../schemas/delivery.schema';
+import { DeliveryStatus } from '../../schemas/delivery.schema';
 
 export class UpdateDeliveryStatusDto {
   @IsEnum(DeliveryStatus)
