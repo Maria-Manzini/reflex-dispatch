@@ -89,7 +89,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
                         Text(delivery.item),
                         const SizedBox(height: 6),
                         Text(
-                          delivery.status,
+                          delivery.displayStatus,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
