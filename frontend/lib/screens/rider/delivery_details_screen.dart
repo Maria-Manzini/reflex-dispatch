@@ -34,7 +34,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
     try {
       final updated = await widget.riderService.updateStatus(
         deliveryId: delivery.id,
-        status: 'Picked Up',
+        status: 'in_transit',
       );
 
       if (!mounted) return;
@@ -68,7 +68,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
     try {
       final updated = await widget.riderService.updateStatus(
         deliveryId: delivery.id,
-        status: 'Delivered',
+        status: 'delivered',
         scanCode: scanCode,
       );
 
@@ -104,8 +104,8 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final canPickUp = delivery.status == 'Assigned';
-    final canDeliver = delivery.status == 'Picked Up';
+    final canPickUp = delivery.status == 'assigned';
+    final canDeliver = delivery.status == 'in_transit';
 
     return Scaffold(
       appBar: AppBar(title: const Text('Delivery Details')),
@@ -125,7 +125,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
 
           _InfoRow(label: 'Item', value: delivery.item),
 
-          _InfoRow(label: 'Status', value: delivery.status),
+          _InfoRow(label: 'Status', value: delivery.displayStatus),
 
           const SizedBox(height: 24),
 
@@ -145,7 +145,7 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
               label: const Text('Scan QR to Confirm Delivery'),
             ),
 
-          if (!loading && delivery.status == 'Delivered')
+          if (!loading && delivery.status == 'delivered')
             const Card(
               child: Padding(
                 padding: EdgeInsets.all(16),
