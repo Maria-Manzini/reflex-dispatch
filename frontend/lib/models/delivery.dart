@@ -5,7 +5,7 @@ class Delivery {
   final String address;
   final String item;
   final String status;
-  final String riderId;
+  final String? riderId;
   final String? proofScan;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -31,7 +31,7 @@ class Delivery {
       address: json['address'] as String,
       item: json['item'] as String,
       status: json['status'] as String,
-      riderId: json['riderId'] as String,
+      riderId: json['riderId'] as String?,
       proofScan: json['proofScan'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
