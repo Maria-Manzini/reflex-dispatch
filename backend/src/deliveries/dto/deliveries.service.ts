@@ -14,6 +14,7 @@ import {
 import { CreateDeliveryDto } from './create-delivery.dto';
 import { AssignDeliveryDto } from './assign-delivery.dto';
 import { DeliveryGateway } from '../delivery.gateway';
+import { UpdateDeliveryStatusDto } from './update-delivery-status.dto';
 
 @Injectable()
 export class DeliveriesService {
@@ -44,6 +45,117 @@ export class DeliveriesService {
     return this.deliveryModel
       .find({ status: DeliveryStatus.PENDING })
       .sort({ createdAt: -1 });
+  }
+
+  async getMyDeliveries(
+    riderId: string,
+  ): Promise<Delivery[]> {
+    if (!Types.ObjectId.isValid(riderId)) {
+      throw new BadRequestException(
+        'riderId is not a valid id',
+      );
+    }
+
+    return this.deliveryModel
+      .find({
+        riderId: new Types.ObjectId(riderId),
+      })
+      .sort({ createdAt: -1 });
+  }
+
+  async updateRiderStatus(
+    id: string,
+    riderId: string,
+    dto: UpdateDeliveryStatusDto,
+  ): Promise<Delivery> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException(
+        'delivery id is not valid',
+      );
+    }
+
+    if (!Types.ObjectId.isValid(riderId)) {
+      throw new BadRequestException(
+        'riderId is not a valid id',
+      );
+    }
+
+    let requiredCurrentStatus: DeliveryStatus;
+
+    if (dto.status === DeliveryStatus.IN_TRANSIT) {
+      requiredCurrentStatus = DeliveryStatus.ASSIGNED;
+    } else if (dto.status === DeliveryStatus.DELIVERED) {
+      requiredCurrentStatus = DeliveryStatus.IN_TRANSIT;
+    } else {
+      throw new BadRequestException(
+        'Rider can only update a delivery to in_transit or delivered',
+      );
+    }
+
+    if (
+      dto.status === DeliveryStatus.DELIVERED &&
+      (!dto.scanCode || dto.scanCode.trim().length === 0)
+    ) {
+      throw new BadRequestException(
+        'scanCode is required to complete delivery',
+      );
+    }
+
+    const update: Record<string, unknown> = {
+      status: dto.status,
+    };
+
+    if (dto.status === DeliveryStatus.DELIVERED) {
+      update.proofScan = dto.scanCode!.trim();
+    }
+
+    const updated = await this.deliveryModel.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(id),
+        riderId: new Types.ObjectId(riderId),
+        status: requiredCurrentStatus,
+      },
+      {
+        $set: update,
+      },
+      {
+        new: true,
+      },
+    );
+
+    if (!updated) {
+      const delivery = await this.deliveryModel.findById(id);
+
+      if (!delivery) {
+        throw new NotFoundException(
+          'delivery not found',
+        );
+      }
+
+      if (
+        !delivery.riderId ||
+        delivery.riderId.toString() !== riderId
+      ) {
+        throw new NotFoundException(
+          'delivery not found for this rider',
+        );
+      }
+
+      throw new ConflictException(
+        `invalid status transition: ${delivery.status} -> ${dto.status}`,
+      );
+    }
+
+    this.deliveryGateway.emitDeliveryUpdated({
+      deliveryId: updated._id.toString(),
+      status: updated.status,
+      updatedAt:
+        (
+          updated.get('updatedAt') as Date | undefined
+        )?.toISOString() ?? new Date().toISOString(),
+    });
+
+    return updated;
   }
 
   async assign(id: string, dto: AssignDeliveryDto): Promise<Delivery> {
