@@ -7,31 +7,18 @@ import 'services/rider_socket_service.dart';
 void main() {
   const baseUrl = 'http://localhost:3000';
 
-  final riderService = ApiRiderService(
-    baseUrl: baseUrl,
-  );
+  final riderService = ApiRiderService(baseUrl: baseUrl);
 
-  final socketService = RiderSocketService(
-    baseUrl: baseUrl,
-  );
+  final socketService = RiderSocketService(baseUrl: baseUrl);
 
-  runApp(
-    ReflexApp(
-      riderService: riderService,
-      socketService: socketService,
-    ),
-  );
+  runApp(ReflexApp(riderService: riderService, socketService: socketService));
 }
 
 class ReflexApp extends StatelessWidget {
   final ApiRiderService riderService;
   final RiderSocketService? socketService;
 
-  const ReflexApp({
-    super.key,
-    required this.riderService,
-    this.socketService,
-  });
+  const ReflexApp({super.key, required this.riderService, this.socketService});
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +26,7 @@ class ReflexApp extends StatelessWidget {
       title: 'Reflex Rider',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
       home: RiderHomeScreen(
