@@ -13,16 +13,13 @@ class CreateDeliveryScreen extends StatefulWidget {
   });
 
   @override
-  State<CreateDeliveryScreen> createState() =>
-      _CreateDeliveryScreenState();
+  State<CreateDeliveryScreen> createState() => _CreateDeliveryScreenState();
 }
 
-class _CreateDeliveryScreenState
-    extends State<CreateDeliveryScreen> {
+class _CreateDeliveryScreenState extends State<CreateDeliveryScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _customerNameController =
-      TextEditingController();
+  final _customerNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _itemController = TextEditingController();
@@ -47,8 +44,7 @@ class _CreateDeliveryScreenState
     try {
       final result = await widget.syncService.submit(
         retailerId: widget.retailerId,
-        customerName:
-            _customerNameController.text.trim(),
+        customerName: _customerNameController.text.trim(),
         phone: _phoneController.text.trim(),
         address: _addressController.text.trim(),
         item: _itemController.text.trim(),
@@ -58,16 +54,12 @@ class _CreateDeliveryScreenState
         return;
       }
 
-      final message =
-          result.state == DeliverySubmitState.created
-              ? 'Delivery request created.'
-              : 'Saved offline. It will sync when connection returns.';
+      final message = result.state == DeliverySubmitState.created
+          ? 'Delivery request created.'
+          : 'Saved offline. It will sync when connection returns.';
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-        ),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
 
       Navigator.pop(context, true);
     } catch (error) {
@@ -76,11 +68,7 @@ class _CreateDeliveryScreenState
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Unable to create delivery: $error',
-          ),
-        ),
+        SnackBar(content: Text('Unable to create delivery: $error')),
       );
     } finally {
       if (mounted) {
@@ -102,9 +90,7 @@ class _CreateDeliveryScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Delivery'),
-      ),
+      appBar: AppBar(title: const Text('Create Delivery')),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -150,23 +136,15 @@ class _CreateDeliveryScreenState
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed:
-                  _submitting ? null : _submit,
+              onPressed: _submitting ? null : _submit,
               icon: _submitting
                   ? const SizedBox(
                       height: 18,
                       width: 18,
-                      child:
-                          CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.add),
-              label: Text(
-                _submitting
-                    ? 'Submitting...'
-                    : 'Create Delivery',
-              ),
+              label: Text(_submitting ? 'Submitting...' : 'Create Delivery'),
             ),
           ],
         ),

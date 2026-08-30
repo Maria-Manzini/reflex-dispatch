@@ -1,18 +1,13 @@
-import 'package:socket_io_client/socket_io_client.dart'
-    as io;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class DeliverySocketService {
   final String baseUrl;
 
   io.Socket? _socket;
 
-  DeliverySocketService({
-    required this.baseUrl,
-  });
+  DeliverySocketService({required this.baseUrl});
 
-  void connect({
-    required void Function() onDeliveryChanged,
-  }) {
+  void connect({required void Function() onDeliveryChanged}) {
     if (_socket != null) {
       return;
     }

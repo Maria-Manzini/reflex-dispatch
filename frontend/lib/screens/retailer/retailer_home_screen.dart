@@ -24,12 +24,10 @@ class RetailerHomeScreen extends StatefulWidget {
   });
 
   @override
-  State<RetailerHomeScreen> createState() =>
-      _RetailerHomeScreenState();
+  State<RetailerHomeScreen> createState() => _RetailerHomeScreenState();
 }
 
-class _RetailerHomeScreenState
-    extends State<RetailerHomeScreen> {
+class _RetailerHomeScreenState extends State<RetailerHomeScreen> {
   late Future<_RetailerData> _dataFuture;
 
   @override
@@ -54,28 +52,22 @@ class _RetailerHomeScreenState
       },
     );
 
-    widget.syncService.syncPending().then(
-      (count) {
-        if (count > 0 && mounted) {
-          _reload();
-        }
-      },
-    );
+    widget.syncService.syncPending().then((count) {
+      if (count > 0 && mounted) {
+        _reload();
+      }
+    });
   }
 
   Future<_RetailerData> _fetchData() async {
     final pending = await widget.pendingStore.all();
 
     try {
-      final deliveries =
-          await widget.retailerService.getMyDeliveries(
+      final deliveries = await widget.retailerService.getMyDeliveries(
         retailerId: widget.retailerId,
       );
 
-      return _RetailerData(
-        deliveries: deliveries,
-        pending: pending,
-      );
+      return _RetailerData(deliveries: deliveries, pending: pending);
     } catch (error) {
       return _RetailerData(
         deliveries: const [],
@@ -130,11 +122,8 @@ class _RetailerHomeScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Retailer Deliveries'),
-      ),
-      floatingActionButton:
-          FloatingActionButton.extended(
+      appBar: AppBar(title: const Text('Retailer Deliveries')),
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _openCreateDelivery,
         icon: const Icon(Icons.add),
         label: const Text('New Delivery'),
@@ -142,19 +131,12 @@ class _RetailerHomeScreenState
       body: FutureBuilder<_RetailerData>(
         future: _dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (!snapshot.hasData) {
-            return const Center(
-              child: Text(
-                'Unable to load deliveries',
-              ),
-            );
+            return const Center(child: Text('Unable to load deliveries'));
           }
 
           final data = snapshot.data!;
@@ -167,8 +149,7 @@ class _RetailerHomeScreenState
                 if (data.remoteError != null)
                   Card(
                     child: Padding(
-                      padding:
-                          const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: Text(
                         'Unable to refresh online deliveries.\n'
                         '${data.remoteError}',
@@ -179,27 +160,21 @@ class _RetailerHomeScreenState
                 if (data.pending.isNotEmpty) ...[
                   Text(
                     'Pending sync',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
 
                   ...data.pending.map(
                     (pending) => Card(
                       child: ListTile(
-                        leading:
-                            const Icon(Icons.cloud_off),
-                        title: Text(
-                          pending.customerName,
-                        ),
+                        leading: const Icon(Icons.cloud_off),
+                        title: Text(pending.customerName),
                         subtitle: Text(
                           '${pending.address}\n'
                           '${pending.item}',
                         ),
                         isThreeLine: true,
-                        trailing:
-                            const Text('Pending'),
+                        trailing: const Text('Pending'),
                       ),
                     ),
                   ),
@@ -209,30 +184,19 @@ class _RetailerHomeScreenState
 
                 Text(
                   'My requests',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
 
                 const SizedBox(height: 8),
 
-                if (data.deliveries.isEmpty &&
-                    data.pending.isEmpty)
+                if (data.deliveries.isEmpty && data.pending.isEmpty)
                   const Padding(
-                    padding:
-                        EdgeInsets.only(top: 120),
-                    child: Center(
-                      child: Text(
-                        'No delivery requests yet',
-                      ),
-                    ),
+                    padding: EdgeInsets.only(top: 120),
+                    child: Center(child: Text('No delivery requests yet')),
                   ),
 
                 ...data.deliveries.map(
-                  (delivery) =>
-                      _DeliveryCard(
-                    delivery: delivery,
-                  ),
+                  (delivery) => _DeliveryCard(delivery: delivery),
                 ),
 
                 const SizedBox(height: 90),
@@ -260,9 +224,7 @@ class _RetailerData {
 class _DeliveryCard extends StatelessWidget {
   final Delivery delivery;
 
-  const _DeliveryCard({
-    required this.delivery,
-  });
+  const _DeliveryCard({required this.delivery});
 
   @override
   Widget build(BuildContext context) {
@@ -271,14 +233,11 @@ class _DeliveryCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               delivery.customerName,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(delivery.phone),
@@ -287,10 +246,7 @@ class _DeliveryCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(delivery.item),
             const SizedBox(height: 12),
-            Chip(
-              label:
-                  Text(delivery.displayStatus),
-            ),
+            Chip(label: Text(delivery.displayStatus)),
           ],
         ),
       ),

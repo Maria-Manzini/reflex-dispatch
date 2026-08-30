@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import '../cache/pending_delivery_store.dart';
@@ -6,23 +5,15 @@ import '../models/delivery.dart';
 import '../network/connectivity_service.dart';
 import 'retailer_service.dart';
 
-enum DeliverySubmitState {
-  created,
-  queued,
-}
+enum DeliverySubmitState { created, queued }
 
 class DeliverySubmitResult {
   final DeliverySubmitState state;
   final Delivery? delivery;
 
-  const DeliverySubmitResult._({
-    required this.state,
-    this.delivery,
-  });
+  const DeliverySubmitResult._({required this.state, this.delivery});
 
-  factory DeliverySubmitResult.created(
-    Delivery delivery,
-  ) {
+  factory DeliverySubmitResult.created(Delivery delivery) {
     return DeliverySubmitResult._(
       state: DeliverySubmitState.created,
       delivery: delivery,
@@ -30,9 +21,7 @@ class DeliverySubmitResult {
   }
 
   factory DeliverySubmitResult.queued() {
-    return const DeliverySubmitResult._(
-      state: DeliverySubmitState.queued,
-    );
+    return const DeliverySubmitResult._(state: DeliverySubmitState.queued);
   }
 }
 
@@ -49,22 +38,18 @@ class RetailerSyncService {
     required this.connectivityService,
   });
 
-  void start({
-    void Function()? onSyncComplete,
-  }) {
-    _subscription ??= connectivityService.changes.listen(
-      (connected) async {
-        if (!connected) {
-          return;
-        }
+  void start({void Function()? onSyncComplete}) {
+    _subscription ??= connectivityService.changes.listen((connected) async {
+      if (!connected) {
+        return;
+      }
 
-        final count = await syncPending();
+      final count = await syncPending();
 
-        if (count > 0) {
-          onSyncComplete?.call();
-        }
-      },
-    );
+      if (count > 0) {
+        onSyncComplete?.call();
+      }
+    });
   }
 
   Future<DeliverySubmitResult> submit({
