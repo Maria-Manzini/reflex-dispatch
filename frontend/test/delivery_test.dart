@@ -24,6 +24,24 @@ void main() {
       expect(delivery.displayStatus, 'Picked Up');
     });
 
+    test('pending delivery allows null riderId', () {
+      final delivery = Delivery.fromJson({
+        '_id': '64f1a2b3c4d5e6f7a8b9c0d1',
+        'customerName': 'Grace Akinyi',
+        'phone': '+254712345678',
+        'address': 'Westlands, Nairobi',
+        'item': 'Samsung Galaxy A54',
+        'status': 'pending',
+        'riderId': null,
+        'proofScan': null,
+        'createdAt': '2026-08-30T08:15:00.000Z',
+        'updatedAt': '2026-08-30T08:15:00.000Z',
+      });
+
+      expect(delivery.riderId, isNull);
+      expect(delivery.displayStatus, 'Created');
+    });
+
     test('maps backend statuses to rider labels', () {
       Delivery makeDelivery(String status) {
         return Delivery(
