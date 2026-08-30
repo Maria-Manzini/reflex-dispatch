@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../models/delivery.dart';
 import '../../services/rider_service.dart';
+import '../../services/rider_socket_service.dart';
 import 'delivery_details_screen.dart';
 
 class RiderHomeScreen extends StatefulWidget {
   final RiderService riderService;
+  final RiderSocketService? socketService;
 
-  const RiderHomeScreen({super.key, required this.riderService});
+  const RiderHomeScreen({
+    super.key,
+    required this.riderService,
+    this.socketService,
+  });
 
   @override
   State<RiderHomeScreen> createState() => _RiderHomeScreenState();
@@ -19,7 +25,16 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
   @override
   void initState() {
     super.initState();
+
     _loadDeliveries();
+
+    widget.socketService?.connect(
+      onDeliveryChanged: () {
+        if (mounted) {
+          _refresh();
+        }
+      },
+    );
   }
 
   void _loadDeliveries() {
@@ -118,5 +133,11 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.socketService?.dispose();
+    super.dispose();
   }
 }
